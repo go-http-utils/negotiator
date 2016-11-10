@@ -1,1 +1,1 @@
-# negotiator.go
+# negotiator

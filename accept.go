@@ -2,16 +2,16 @@ package negotiator
 
 import (
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 )
 
-// ParseAccept parse the "Accept" header and return the []spec
-func ParseAccept(header http.Header) (specs []Spec) {
+func parseAccept(header http.Header) (specs specs) {
 	headerVal := header.Get(HeaderAccept)
 
 	if headerVal == "" {
-		specs = []Spec{Spec{val: "*/*", q: defaultQ}}
+		specs = []spec{spec{val: "*/*", q: defaultQ}}
 		return
 	}
 
@@ -31,7 +31,7 @@ func ParseAccept(header http.Header) (specs []Spec) {
 			continue
 		}
 
-		spec := Spec{val: val, q: defaultQ}
+		spec := spec{val: val, q: defaultQ}
 
 		if len(pair) == 2 && strings.HasPrefix(pair[1], "q=") {
 			var i int
@@ -44,7 +44,7 @@ func ParseAccept(header http.Header) (specs []Spec) {
 				continue
 			}
 
-			if q, err := strconv.ParseFloat(pair[1][i:], 64); err == nil {
+			if q, err := strconv.ParseFloat(pair[1][i:], 64); err == nil && q != 0 {
 				spec.q = q
 			} else {
 				continue
@@ -54,5 +54,7 @@ func ParseAccept(header http.Header) (specs []Spec) {
 		specs = append(specs, spec)
 	}
 
-	return specs
+	sort.Sort(specs)
+
+	return
 }
