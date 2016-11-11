@@ -73,14 +73,28 @@ func (n Negotiator) Accept(offers []string) (bestOffer string, matched bool) {
 			switch {
 			case spec.q < bestQ:
 				continue
-			case spec.val == "*/*" && (spec.q < bestQ || bestWild > 2):
-				matched, bestOffer, bestQ, bestWild = true, offer, spec.q, 2
-			case strings.HasSuffix(spec.val, "/*") &&
-				strings.HasPrefix(offer, spec.val[:len(spec.val)-1]) &&
-				(spec.q < bestQ || bestWild > 1):
-				matched, bestOffer, bestQ, bestWild = true, offer, spec.q, 1
-			case spec.val == offer && (spec.q < bestQ || bestWild > 0):
-				matched, bestOffer, bestQ, bestWild = true, offer, spec.q, 0
+			case spec.val == "*/*":
+				if spec.q < bestQ || bestWild > 2 {
+					matched = true
+					bestOffer = offer
+
+					bestQ, bestWild = spec.q, 2
+				}
+			case strings.HasSuffix(spec.val, "/*"):
+				if strings.HasPrefix(offer, spec.val[:len(spec.val)-1]) &&
+					(spec.q < bestQ || bestWild > 1) {
+					matched = true
+					bestOffer = offer
+
+					bestQ, bestWild = spec.q, 1
+				}
+			case spec.val == offer:
+				if spec.q < bestQ || bestWild > 0 {
+					matched = true
+					bestOffer = offer
+
+					bestQ, bestWild = spec.q, 0
+				}
 			}
 		}
 	}
