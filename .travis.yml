@@ -1,4 +1,4 @@
-languge: go
+language: go
 go:
   - 1.7
 before_install:
