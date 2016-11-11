@@ -1,0 +1,7 @@
+languge: go
+go:
+  - 1.7
+before_install:
+  - go get -t -v
+script:
+  - go test -v

@@ -9,17 +9,17 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type AcceptTestSuite struct {
+type ParseAcceptTestSuite struct {
 	suite.Suite
 
 	header http.Header
 }
 
-func (s *AcceptTestSuite) SetupTest() {
+func (s *ParseAcceptTestSuite) SetupTest() {
 	s.header = make(http.Header)
 }
 
-func (s *AcceptTestSuite) TestEmpty() {
+func (s *ParseAcceptTestSuite) TestEmpty() {
 	assert := assert.New(s.T())
 
 	s.header.Set(HeaderAccept, "")
@@ -30,7 +30,7 @@ func (s *AcceptTestSuite) TestEmpty() {
 	equalSpec(assert, specs[0], "*/*", 1.0)
 }
 
-func (s *AcceptTestSuite) TestAsterisk() {
+func (s *ParseAcceptTestSuite) TestAsterisk() {
 	assert := assert.New(s.T())
 
 	s.header.Set(HeaderAccept, "*/*")
@@ -41,7 +41,7 @@ func (s *AcceptTestSuite) TestAsterisk() {
 	equalSpec(assert, specs[0], "*/*", 1.0)
 }
 
-func (s *AcceptTestSuite) TestOneType() {
+func (s *ParseAcceptTestSuite) TestOneType() {
 	assert := assert.New(s.T())
 
 	s.header.Set(HeaderAccept, "application/json")
@@ -52,7 +52,7 @@ func (s *AcceptTestSuite) TestOneType() {
 	equalSpec(assert, specs[0], "application/json", 1.0)
 }
 
-func (s *AcceptTestSuite) TestOneTypeWithQZero() {
+func (s *ParseAcceptTestSuite) TestOneTypeWithQZero() {
 	assert := assert.New(s.T())
 
 	s.header.Set(HeaderAccept, "application/json;q=0")
@@ -61,7 +61,7 @@ func (s *AcceptTestSuite) TestOneTypeWithQZero() {
 	assert.Equal(0, len(specs))
 }
 
-func (s *AcceptTestSuite) TestSortByQ() {
+func (s *ParseAcceptTestSuite) TestSortByQ() {
 	assert := assert.New(s.T())
 
 	s.header.Set(HeaderAccept, "application/json;q=0.2, text/html")
@@ -73,7 +73,7 @@ func (s *AcceptTestSuite) TestSortByQ() {
 	equalSpec(assert, specs[1], "application/json", 0.2)
 }
 
-func (s *AcceptTestSuite) TestSuffixAsterisk() {
+func (s *ParseAcceptTestSuite) TestSuffixAsterisk() {
 	assert := assert.New(s.T())
 
 	s.header.Set(HeaderAccept, "text/*")
@@ -84,7 +84,7 @@ func (s *AcceptTestSuite) TestSuffixAsterisk() {
 	equalSpec(assert, specs[0], "text/*", 1.0)
 }
 
-func (s *AcceptTestSuite) TestSortWithAsterisk() {
+func (s *ParseAcceptTestSuite) TestSortWithAsterisk() {
 	assert := assert.New(s.T())
 
 	s.header.Set(HeaderAccept, "text/plain, application/json;q=0.5, text/html, */*;q=0.1")
@@ -98,6 +98,6 @@ func (s *AcceptTestSuite) TestSortWithAsterisk() {
 	equalSpec(assert, specs[3], "*/*", 0.1)
 }
 
-func TestAccept(t *testing.T) {
-	suite.Run(t, new(AcceptTestSuite))
+func TestParseAccept(t *testing.T) {
+	suite.Run(t, new(ParseAcceptTestSuite))
 }

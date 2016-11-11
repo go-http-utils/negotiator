@@ -31,7 +31,7 @@ func parseAccept(header http.Header) (specs specs) {
 			continue
 		}
 
-		spec := spec{val: val, q: defaultQ}
+		spec := spec{val: strings.ToLower(val), q: defaultQ}
 
 		if len(pair) == 2 && strings.HasPrefix(pair[1], "q=") {
 			var i int
@@ -44,7 +44,11 @@ func parseAccept(header http.Header) (specs specs) {
 				continue
 			}
 
-			if q, err := strconv.ParseFloat(pair[1][i:], 64); err == nil && q != 0 {
+			if q, err := strconv.ParseFloat(pair[1][i:], 64); err == nil && q != 0.0 {
+				if q > defaultQ {
+					q = defaultQ
+				}
+
 				spec.q = q
 			} else {
 				continue
