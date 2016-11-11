@@ -7,21 +7,21 @@ import (
 	"strings"
 )
 
-func parseAccept(header http.Header) (specs specs) {
-	headerVal := strings.ToLower(strings.Replace(header.Get(HeaderAccept),
+func parseLanguage(header http.Header) (specs specs) {
+	headerVal := strings.ToLower(strings.Replace(header.Get(HeaderAcceptLanguage),
 		" ", "", -1))
 
 	if headerVal == "" {
-		specs = []spec{spec{val: "*/*", q: defaultQ}}
+		specs = []spec{spec{val: "*", q: defaultQ}}
 		return
 	}
 
-	accpets := strings.Split(headerVal, ",")
+	languages := strings.Split(headerVal, ",")
 
-	for _, accept := range accpets {
-		pair := strings.Split(strings.TrimSpace(accept), ";")
+	for _, languages := range languages {
+		pair := strings.Split(strings.TrimSpace(languages), ";")
 
-		if len(pair) < 1 || len(pair) > 2 || strings.Index(pair[0], "/") == -1 {
+		if len(pair) < 1 || len(pair) > 2 {
 			continue
 		}
 

@@ -10,6 +10,8 @@ const (
 
 	// HeaderAccept is the HTTP "Accept" Header.
 	HeaderAccept = "Accept"
+	// HeaderAcceptLanguage is the HTTP "Accept-Language" Header.
+	HeaderAcceptLanguage = "Accept-Language"
 )
 
 type spec struct {
