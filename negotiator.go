@@ -6,12 +6,12 @@ import (
 )
 
 const (
-	defaultQ float64 = 1.0
-
 	// HeaderAccept is the HTTP "Accept" Header.
 	HeaderAccept = "Accept"
 	// HeaderAcceptLanguage is the HTTP "Accept-Language" Header.
 	HeaderAcceptLanguage = "Accept-Language"
+	// HeaderAcceptEncoding is the HTTP "Accept-Encoding" Header.
+	HeaderAcceptEncoding = "Accept-Encoding"
 )
 
 type spec struct {
@@ -52,6 +52,10 @@ func (ss specs) Less(i, j int) bool {
 	return false
 }
 
+func formatHeaderVal(val string) string {
+	return strings.ToLower(strings.Replace(val, " ", "", -1))
+}
+
 // Negotiator repensents the HTTP negotiator.
 type Negotiator struct {
 	req *http.Request
@@ -64,77 +68,15 @@ func New(req *http.Request) Negotiator {
 
 // Accept returns the most preferred content types from the HTTP Accept header.
 func (n Negotiator) Accept(offers []string) (bestOffer string, matched bool) {
-	specs := parseAccept(n.req.Header)
+	parser := newHeaderParser(n.req.Header, true)
 
-	bestQ, bestWild := 0.0, 3
-
-	for _, offer := range offers {
-		offer = strings.ToLower(offer)
-
-		for _, spec := range specs {
-			switch {
-			case spec.q < bestQ:
-				continue
-			case spec.val == "*/*":
-				if spec.q < bestQ || bestWild > 2 {
-					matched = true
-					bestOffer = offer
-
-					bestQ, bestWild = spec.q, 2
-				}
-			case strings.HasSuffix(spec.val, "/*"):
-				if strings.HasPrefix(offer, spec.val[:len(spec.val)-1]) &&
-					(spec.q < bestQ || bestWild > 1) {
-					matched = true
-					bestOffer = offer
-
-					bestQ, bestWild = spec.q, 1
-				}
-			case spec.val == offer:
-				if spec.q < bestQ || bestWild > 0 {
-					matched = true
-					bestOffer = offer
-
-					bestQ, bestWild = spec.q, 0
-				}
-			}
-		}
-	}
-
-	return
+	return parser.selectOffer(offers, parser.parse(HeaderAccept))
 }
 
 // Language returns the most preferred language from the HTTP Accept-Language
 // header.
 func (n Negotiator) Language(offers []string) (bestOffer string, matched bool) {
-	specs := parseLanguage(n.req.Header)
+	parser := newHeaderParser(n.req.Header, false)
 
-	bestQ, bestWild := 0.0, 2
-
-	for _, offer := range offers {
-		offer = strings.ToLower(offer)
-
-		for _, spec := range specs {
-			switch {
-			case spec.q < bestQ:
-				continue
-			case spec.val == "*":
-				if spec.q < bestQ || bestWild > 1 {
-					matched = true
-					bestOffer = offer
-
-					bestQ, bestWild = spec.q, 1
-				}
-			case spec.val == offer:
-				if spec.q < bestQ || bestWild > 0 {
-					matched = true
-					bestOffer = offer
-
-					bestQ, bestWild = spec.q, 0
-				}
-			}
-		}
-	}
-
-	return
+	return parser.selectOffer(offers, parser.parse(HeaderAcceptLanguage))
 }
