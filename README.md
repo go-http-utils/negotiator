@@ -10,6 +10,10 @@ An HTTP content negotiator for Go
 go get -u github.com/DavidCai1993/negotiator
 ```
 
+## Documentation
+
+API documentation can be found here: https://godoc.org/github.com/DavidCai1993/negotiator
+
 ## Usage
 
 ```go
