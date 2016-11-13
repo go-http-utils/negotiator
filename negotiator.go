@@ -103,3 +103,38 @@ func (n Negotiator) Accept(offers []string) (bestOffer string, matched bool) {
 
 	return
 }
+
+// Language returns the most preferred language from the HTTP Accept-Language
+// header.
+func (n Negotiator) Language(offers []string) (bestOffer string, matched bool) {
+	specs := parseLanguage(n.req.Header)
+
+	bestQ, bestWild := 0.0, 2
+
+	for _, offer := range offers {
+		offer = strings.ToLower(offer)
+
+		for _, spec := range specs {
+			switch {
+			case spec.q < bestQ:
+				continue
+			case spec.val == "*":
+				if spec.q < bestQ || bestWild > 1 {
+					matched = true
+					bestOffer = offer
+
+					bestQ, bestWild = spec.q, 1
+				}
+			case spec.val == offer:
+				if spec.q < bestQ || bestWild > 0 {
+					matched = true
+					bestOffer = offer
+
+					bestQ, bestWild = spec.q, 0
+				}
+			}
+		}
+	}
+
+	return
+}

@@ -21,6 +21,7 @@ func setUpNegotiator(header, val string) Negotiator {
 	return New(req)
 }
 
+// Accept
 type AcceptSuite struct {
 	suite.Suite
 }
@@ -114,4 +115,73 @@ func (s AcceptSuite) TestWithAllAsterisk() {
 
 func TestAccept(t *testing.T) {
 	suite.Run(t, new(AcceptSuite))
+}
+
+// Language
+type LanguageSuite struct {
+	suite.Suite
+}
+
+func (s LanguageSuite) TestEmpty() {
+	n := setUpNegotiator(HeaderAcceptLanguage, "")
+
+	_, matched := n.Language([]string{})
+
+	s.False(matched)
+}
+
+func (s LanguageSuite) TestCaseInsensitive() {
+	n := setUpNegotiator(HeaderAcceptLanguage, "En")
+
+	bestOffer, matched := n.Language([]string{"eN"})
+
+	s.True(matched)
+	s.Equal("en", bestOffer)
+}
+
+func (s LanguageSuite) TestUnMatched() {
+	n := setUpNegotiator(HeaderAcceptLanguage, "en,zh")
+
+	_, matched := n.Language([]string{"ko"})
+
+	s.False(matched)
+}
+
+func (s LanguageSuite) TestEmptyLanguages() {
+	n := setUpNegotiator(HeaderAcceptLanguage, "en;q=0")
+
+	_, matched := n.Language([]string{"en"})
+
+	s.False(matched)
+}
+
+func (s LanguageSuite) TestOneMatch() {
+	n := setUpNegotiator(HeaderAcceptLanguage, "en;q=0.2")
+
+	bestOffer, matched := n.Language([]string{"en"})
+
+	s.True(matched)
+	s.Equal("en", bestOffer)
+}
+
+func (s LanguageSuite) TestMatchAsterisk() {
+	n := setUpNegotiator(HeaderAcceptLanguage, "*")
+
+	bestOffer, matched := n.Language([]string{"ko", "en"})
+
+	s.True(matched)
+	s.Equal("ko", bestOffer)
+}
+
+func (s LanguageSuite) TestFirstMatchAllAsterisk() {
+	n := setUpNegotiator(HeaderAcceptLanguage, "*, ko;q=0.5")
+
+	bestOffer, matched := n.Language([]string{"en", "ko", "zh"})
+
+	s.True(matched)
+	s.Equal("en", bestOffer)
+}
+
+func TestLanguage(t *testing.T) {
+	suite.Run(t, new(LanguageSuite))
 }
