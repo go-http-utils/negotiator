@@ -94,10 +94,10 @@ func (p headerParser) selectOffer(offers []string, specs specs) (bestOffer strin
 
 		for _, spec := range specs {
 			switch {
-			case spec.q < bestQ:
+			case spec.q <= bestQ:
 				continue
-			case spec.val == p.wildCard:
-				if spec.q < bestQ || bestWild > totalWild-1 {
+			case spec.val == p.wildCard && !specs.hasVal(offer):
+				if spec.q > bestQ || bestWild > totalWild-1 {
 					matched = true
 					bestOffer = offer
 
@@ -105,14 +105,14 @@ func (p headerParser) selectOffer(offers []string, specs specs) (bestOffer strin
 				}
 			case p.hasSlashVal && strings.HasSuffix(spec.val, "/*"):
 				if strings.HasPrefix(offer, spec.val[:len(spec.val)-1]) &&
-					(spec.q < bestQ || bestWild > totalWild-2) {
+					(spec.q > bestQ || bestWild > totalWild-2) {
 					matched = true
 					bestOffer = offer
 
 					bestQ, bestWild = spec.q, totalWild-2
 				}
 			case spec.val == offer:
-				if spec.q < bestQ || bestWild > 0 {
+				if spec.q > bestQ || bestWild > 0 {
 					matched = true
 					bestOffer = offer
 

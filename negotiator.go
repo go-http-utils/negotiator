@@ -52,6 +52,16 @@ func (ss specs) Less(i, j int) bool {
 	return false
 }
 
+func (ss specs) hasVal(val string) bool {
+	for _, spec := range ss {
+		if spec.val == val {
+			return true
+		}
+	}
+
+	return false
+}
+
 func formatHeaderVal(val string) string {
 	return strings.ToLower(strings.Replace(val, " ", "", -1))
 }
@@ -79,4 +89,12 @@ func (n Negotiator) Language(offers []string) (bestOffer string, matched bool) {
 	parser := newHeaderParser(n.req.Header, false)
 
 	return parser.selectOffer(offers, parser.parse(HeaderAcceptLanguage))
+}
+
+// Encoding returns the most preferred language from the HTTP Accept-Encoding
+// header.
+func (n Negotiator) Encoding(offers []string) (bestOffer string, matched bool) {
+	parser := newHeaderParser(n.req.Header, false)
+
+	return parser.selectOffer(offers, parser.parse(HeaderAcceptEncoding))
 }

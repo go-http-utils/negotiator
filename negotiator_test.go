@@ -185,3 +185,72 @@ func (s LanguageSuite) TestFirstMatchAllAsterisk() {
 func TestLanguage(t *testing.T) {
 	suite.Run(t, new(LanguageSuite))
 }
+
+// Encoding
+type EncodingSuite struct {
+	suite.Suite
+}
+
+func (s EncodingSuite) TestEmpty() {
+	n := setUpNegotiator(HeaderAcceptEncoding, "")
+
+	_, matched := n.Encoding([]string{})
+
+	s.False(matched)
+}
+
+func (s EncodingSuite) TestCaseInsensitive() {
+	n := setUpNegotiator(HeaderAcceptEncoding, "Gzip")
+
+	bestOffer, matched := n.Encoding([]string{"GzIp"})
+
+	s.True(matched)
+	s.Equal("gzip", bestOffer)
+}
+
+func (s EncodingSuite) TestUnMatched() {
+	n := setUpNegotiator(HeaderAcceptEncoding, "gzip,default")
+
+	_, matched := n.Encoding([]string{"zlib"})
+
+	s.False(matched)
+}
+
+func (s EncodingSuite) TestEmptyLanguages() {
+	n := setUpNegotiator(HeaderAcceptEncoding, "gzip;q=0")
+
+	_, matched := n.Encoding([]string{"gzip"})
+
+	s.False(matched)
+}
+
+func (s EncodingSuite) TestOneMatch() {
+	n := setUpNegotiator(HeaderAcceptEncoding, "gzip;q=0.2")
+
+	bestOffer, matched := n.Encoding([]string{"gzip"})
+
+	s.True(matched)
+	s.Equal("gzip", bestOffer)
+}
+
+func (s EncodingSuite) TestMatchAsterisk() {
+	n := setUpNegotiator(HeaderAcceptEncoding, "*")
+
+	bestOffer, matched := n.Encoding([]string{"gzip", "deflate"})
+
+	s.True(matched)
+	s.Equal("gzip", bestOffer)
+}
+
+func (s EncodingSuite) TestFirstMatchAllAsterisk() {
+	n := setUpNegotiator(HeaderAcceptEncoding, "*, gzip;q=0.5")
+
+	bestOffer, matched := n.Encoding([]string{"gzip", "deflate", "zlib"})
+
+	s.True(matched)
+	s.Equal("deflate", bestOffer)
+}
+
+func TestEncoding(t *testing.T) {
+	suite.Run(t, new(EncodingSuite))
+}
