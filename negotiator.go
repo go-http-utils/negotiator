@@ -12,6 +12,8 @@ const (
 	HeaderAcceptLanguage = "Accept-Language"
 	// HeaderAcceptEncoding is the HTTP "Accept-Encoding" Header.
 	HeaderAcceptEncoding = "Accept-Encoding"
+	// HeaderAcceptCharset is the HTTP "Accept-Charset" Header.
+	HeaderAcceptCharset = "Accept-Charset"
 )
 
 type spec struct {
@@ -97,4 +99,12 @@ func (n Negotiator) Encoding(offers []string) (bestOffer string, matched bool) {
 	parser := newHeaderParser(n.req.Header, false)
 
 	return parser.selectOffer(offers, parser.parse(HeaderAcceptEncoding))
+}
+
+// Charset returns the most preferred language from the HTTP Accept-Charset
+// header.
+func (n Negotiator) Charset(offers []string) (bestOffer string, matched bool) {
+	parser := newHeaderParser(n.req.Header, false)
+
+	return parser.selectOffer(offers, parser.parse(HeaderAcceptCharset))
 }

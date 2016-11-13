@@ -37,10 +37,10 @@ func (s AcceptSuite) TestEmpty() {
 func (s AcceptSuite) TestCaseInsensitive() {
 	n := setUpNegotiator(HeaderAccept, "text/html")
 
-	bestOffer, matched := n.Accept([]string{"TExt/htmL"})
+	bestOffer, matched := n.Accept([]string{"TEXT/HTML"})
 
 	s.True(matched)
-	s.Equal("text/html", bestOffer)
+	s.Equal("TEXT/HTML", bestOffer)
 }
 
 func (s AcceptSuite) TestUnMatched() {
@@ -136,7 +136,7 @@ func (s LanguageSuite) TestCaseInsensitive() {
 	bestOffer, matched := n.Language([]string{"eN"})
 
 	s.True(matched)
-	s.Equal("en", bestOffer)
+	s.Equal("eN", bestOffer)
 }
 
 func (s LanguageSuite) TestUnMatched() {
@@ -200,12 +200,12 @@ func (s EncodingSuite) TestEmpty() {
 }
 
 func (s EncodingSuite) TestCaseInsensitive() {
-	n := setUpNegotiator(HeaderAcceptEncoding, "Gzip")
+	n := setUpNegotiator(HeaderAcceptEncoding, "GZip")
 
-	bestOffer, matched := n.Encoding([]string{"GzIp"})
+	bestOffer, matched := n.Encoding([]string{"Gzip"})
 
 	s.True(matched)
-	s.Equal("gzip", bestOffer)
+	s.Equal("Gzip", bestOffer)
 }
 
 func (s EncodingSuite) TestUnMatched() {
@@ -253,4 +253,82 @@ func (s EncodingSuite) TestFirstMatchAllAsterisk() {
 
 func TestEncoding(t *testing.T) {
 	suite.Run(t, new(EncodingSuite))
+}
+
+// Charset
+type CharsetSuite struct {
+	suite.Suite
+}
+
+func (s CharsetSuite) TestEmpty() {
+	n := setUpNegotiator(HeaderAcceptCharset, "")
+
+	_, matched := n.Charset([]string{})
+
+	s.False(matched)
+}
+
+func (s CharsetSuite) TestCaseInsensitive() {
+	n := setUpNegotiator(HeaderAcceptCharset, "ISO-8859-1")
+
+	bestOffer, matched := n.Charset([]string{"ISO-8859-1"})
+
+	s.True(matched)
+	s.Equal("ISO-8859-1", bestOffer)
+}
+
+func (s CharsetSuite) TestUnMatched() {
+	n := setUpNegotiator(HeaderAcceptCharset, "ISO-8859-1,UTF-8")
+
+	_, matched := n.Charset([]string{"ASCII"})
+
+	s.False(matched)
+}
+
+func (s CharsetSuite) TestEmptyCharset() {
+	n := setUpNegotiator(HeaderAcceptCharset, "UTF-8;q=0")
+
+	_, matched := n.Charset([]string{"UTF-8"})
+
+	s.False(matched)
+}
+
+func (s CharsetSuite) TestOneMatch() {
+	n := setUpNegotiator(HeaderAcceptCharset, "UTF-8;q=0.2")
+
+	bestOffer, matched := n.Charset([]string{"UTF-8"})
+
+	s.True(matched)
+	s.Equal("UTF-8", bestOffer)
+}
+
+func (s CharsetSuite) TestMatchAsterisk() {
+	n := setUpNegotiator(HeaderAcceptCharset, "*")
+
+	bestOffer, matched := n.Charset([]string{"UTF-8", "ISO-8859-1"})
+
+	s.True(matched)
+	s.Equal("UTF-8", bestOffer)
+}
+
+func (s CharsetSuite) TestFirstMatchAllAsterisk() {
+	n := setUpNegotiator(HeaderAcceptCharset, "*, UTF-8;q=0.5")
+
+	bestOffer, matched := n.Charset([]string{"UTF-8", "ISO-8859-1", "ASCII"})
+
+	s.True(matched)
+	s.Equal("ISO-8859-1", bestOffer)
+}
+
+func (s CharsetSuite) TestHighOrderPreferred() {
+	n := setUpNegotiator(HeaderAcceptCharset, "UTF-8;q=0.6, ISO-8859-1;q=0.8, UTF-8;q=0.9")
+
+	bestOffer, matched := n.Charset([]string{"UTF-8", "ISO-8859-1", "ASCII"})
+
+	s.True(matched)
+	s.Equal("UTF-8", bestOffer)
+}
+
+func TestCharset(t *testing.T) {
+	suite.Run(t, new(CharsetSuite))
 }
