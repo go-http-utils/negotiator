@@ -1,18 +1,18 @@
 # negotiator
-[![Build Status](https://travis-ci.org/DavidCai1993/negotiator.svg?branch=master)](https://travis-ci.org/DavidCai1993/negotiator)
-[![Coverage Status](https://coveralls.io/repos/github/DavidCai1993/negotiator/badge.svg)](https://coveralls.io/github/DavidCai1993/negotiator)
+[![Build Status](https://travis-ci.org/go-http-utils/negotiator.svg?branch=master)](https://travis-ci.org/go-http-utils/negotiator)
+[![Coverage Status](https://coveralls.io/repos/github/go-http-utils/negotiator/badge.svg?branch=master)](https://coveralls.io/github/go-http-utils/negotiator?branch=master)
 
 An HTTP content negotiator for Go
 
 ## Installation
 
 ```sh
-go get -u github.com/DavidCai1993/negotiator
+go get -u github.com/go-http-utils/negotiator
 ```
 
 ## Documentation
 
-API documentation can be found here: https://godoc.org/github.com/DavidCai1993/negotiator
+API documentation can be found here: https://godoc.org/github.com/go-http-utils/negotiator
 
 ## Usage
 
