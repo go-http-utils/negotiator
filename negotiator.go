@@ -3,18 +3,12 @@ package negotiator
 import (
 	"net/http"
 	"strings"
+
+	"github.com/go-http-utils/headers"
 )
 
-const (
-	// HeaderAccept is the HTTP "Accept" Header.
-	HeaderAccept = "Accept"
-	// HeaderAcceptLanguage is the HTTP "Accept-Language" Header.
-	HeaderAcceptLanguage = "Accept-Language"
-	// HeaderAcceptEncoding is the HTTP "Accept-Encoding" Header.
-	HeaderAcceptEncoding = "Accept-Encoding"
-	// HeaderAcceptCharset is the HTTP "Accept-Charset" Header.
-	HeaderAcceptCharset = "Accept-Charset"
-)
+// Version is this package's version
+const Version = "0.1.0"
 
 type spec struct {
 	val string
@@ -82,7 +76,7 @@ func New(req *http.Request) Negotiator {
 func (n Negotiator) Accept(offers []string) (bestOffer string, matched bool) {
 	parser := newHeaderParser(n.req.Header, true)
 
-	return parser.selectOffer(offers, parser.parse(HeaderAccept))
+	return parser.selectOffer(offers, parser.parse(headers.Accept))
 }
 
 // Language returns the most preferred language from the HTTP Accept-Language
@@ -90,7 +84,7 @@ func (n Negotiator) Accept(offers []string) (bestOffer string, matched bool) {
 func (n Negotiator) Language(offers []string) (bestOffer string, matched bool) {
 	parser := newHeaderParser(n.req.Header, false)
 
-	return parser.selectOffer(offers, parser.parse(HeaderAcceptLanguage))
+	return parser.selectOffer(offers, parser.parse(headers.AcceptLanguage))
 }
 
 // Encoding returns the most preferred language from the HTTP Accept-Encoding
@@ -98,7 +92,7 @@ func (n Negotiator) Language(offers []string) (bestOffer string, matched bool) {
 func (n Negotiator) Encoding(offers []string) (bestOffer string, matched bool) {
 	parser := newHeaderParser(n.req.Header, false)
 
-	return parser.selectOffer(offers, parser.parse(HeaderAcceptEncoding))
+	return parser.selectOffer(offers, parser.parse(headers.AcceptEncoding))
 }
 
 // Charset returns the most preferred language from the HTTP Accept-Charset
@@ -106,5 +100,5 @@ func (n Negotiator) Encoding(offers []string) (bestOffer string, matched bool) {
 func (n Negotiator) Charset(offers []string) (bestOffer string, matched bool) {
 	parser := newHeaderParser(n.req.Header, false)
 
-	return parser.selectOffer(offers, parser.parse(HeaderAcceptCharset))
+	return parser.selectOffer(offers, parser.parse(headers.AcceptCharset))
 }

@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/go-http-utils/headers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -27,7 +28,7 @@ type AcceptSuite struct {
 }
 
 func (s AcceptSuite) TestEmpty() {
-	n := setUpNegotiator(HeaderAccept, "application/json;q=0.2, text/html")
+	n := setUpNegotiator(headers.Accept, "application/json;q=0.2, text/html")
 
 	_, matched := n.Accept([]string{})
 
@@ -35,7 +36,7 @@ func (s AcceptSuite) TestEmpty() {
 }
 
 func (s AcceptSuite) TestCaseInsensitive() {
-	n := setUpNegotiator(HeaderAccept, "text/html")
+	n := setUpNegotiator(headers.Accept, "text/html")
 
 	bestOffer, matched := n.Accept([]string{"TEXT/HTML"})
 
@@ -44,7 +45,7 @@ func (s AcceptSuite) TestCaseInsensitive() {
 }
 
 func (s AcceptSuite) TestUnMatched() {
-	n := setUpNegotiator(HeaderAccept, "application/json;q=0.2, text/html")
+	n := setUpNegotiator(headers.Accept, "application/json;q=0.2, text/html")
 
 	_, matched := n.Accept([]string{"text/plain"})
 
@@ -52,7 +53,7 @@ func (s AcceptSuite) TestUnMatched() {
 }
 
 func (s AcceptSuite) TestEmptyAccepts() {
-	n := setUpNegotiator(HeaderAccept, "application/json;q=0")
+	n := setUpNegotiator(headers.Accept, "application/json;q=0")
 
 	_, matched := n.Accept([]string{"application/json"})
 
@@ -60,7 +61,7 @@ func (s AcceptSuite) TestEmptyAccepts() {
 }
 
 func (s AcceptSuite) TestOneMatch() {
-	n := setUpNegotiator(HeaderAccept, "application/json;q=0.2")
+	n := setUpNegotiator(headers.Accept, "application/json;q=0.2")
 
 	bestOffer, matched := n.Accept([]string{"application/json"})
 
@@ -69,7 +70,7 @@ func (s AcceptSuite) TestOneMatch() {
 }
 
 func (s AcceptSuite) TestWithAsterisk() {
-	n := setUpNegotiator(HeaderAccept, "text/*")
+	n := setUpNegotiator(headers.Accept, "text/*")
 
 	bestOffer, matched := n.Accept([]string{"text/*"})
 
@@ -78,7 +79,7 @@ func (s AcceptSuite) TestWithAsterisk() {
 }
 
 func (s AcceptSuite) TestMatchAsterisk() {
-	n := setUpNegotiator(HeaderAccept, "text/*")
+	n := setUpNegotiator(headers.Accept, "text/*")
 
 	bestOffer, matched := n.Accept([]string{"text/html"})
 
@@ -87,7 +88,7 @@ func (s AcceptSuite) TestMatchAsterisk() {
 }
 
 func (s AcceptSuite) TestFirstMatchAsterisk() {
-	n := setUpNegotiator(HeaderAccept, "text/*")
+	n := setUpNegotiator(headers.Accept, "text/*")
 
 	bestOffer, matched := n.Accept([]string{"text/html", "text/plain", "application/json"})
 
@@ -96,7 +97,7 @@ func (s AcceptSuite) TestFirstMatchAsterisk() {
 }
 
 func (s AcceptSuite) TestFirstMatchAllAsterisk() {
-	n := setUpNegotiator(HeaderAccept, "*/*, application/json;q=0.2")
+	n := setUpNegotiator(headers.Accept, "*/*, application/json;q=0.2")
 
 	bestOffer, matched := n.Accept([]string{"text/html", "application/json", "text/plain"})
 
@@ -105,7 +106,7 @@ func (s AcceptSuite) TestFirstMatchAllAsterisk() {
 }
 
 func (s AcceptSuite) TestWithAllAsterisk() {
-	n := setUpNegotiator(HeaderAccept, "*/*")
+	n := setUpNegotiator(headers.Accept, "*/*")
 
 	bestOffer, matched := n.Accept([]string{"application/json", "text/html", "text/plain"})
 
@@ -123,7 +124,7 @@ type LanguageSuite struct {
 }
 
 func (s LanguageSuite) TestEmpty() {
-	n := setUpNegotiator(HeaderAcceptLanguage, "")
+	n := setUpNegotiator(headers.AcceptLanguage, "")
 
 	_, matched := n.Language([]string{})
 
@@ -131,7 +132,7 @@ func (s LanguageSuite) TestEmpty() {
 }
 
 func (s LanguageSuite) TestCaseInsensitive() {
-	n := setUpNegotiator(HeaderAcceptLanguage, "En")
+	n := setUpNegotiator(headers.AcceptLanguage, "En")
 
 	bestOffer, matched := n.Language([]string{"eN"})
 
@@ -140,7 +141,7 @@ func (s LanguageSuite) TestCaseInsensitive() {
 }
 
 func (s LanguageSuite) TestUnMatched() {
-	n := setUpNegotiator(HeaderAcceptLanguage, "en,zh")
+	n := setUpNegotiator(headers.AcceptLanguage, "en,zh")
 
 	_, matched := n.Language([]string{"ko"})
 
@@ -148,7 +149,7 @@ func (s LanguageSuite) TestUnMatched() {
 }
 
 func (s LanguageSuite) TestEmptyLanguages() {
-	n := setUpNegotiator(HeaderAcceptLanguage, "en;q=0")
+	n := setUpNegotiator(headers.AcceptLanguage, "en;q=0")
 
 	_, matched := n.Language([]string{"en"})
 
@@ -156,7 +157,7 @@ func (s LanguageSuite) TestEmptyLanguages() {
 }
 
 func (s LanguageSuite) TestOneMatch() {
-	n := setUpNegotiator(HeaderAcceptLanguage, "en;q=0.2")
+	n := setUpNegotiator(headers.AcceptLanguage, "en;q=0.2")
 
 	bestOffer, matched := n.Language([]string{"en"})
 
@@ -165,7 +166,7 @@ func (s LanguageSuite) TestOneMatch() {
 }
 
 func (s LanguageSuite) TestMatchAsterisk() {
-	n := setUpNegotiator(HeaderAcceptLanguage, "*")
+	n := setUpNegotiator(headers.AcceptLanguage, "*")
 
 	bestOffer, matched := n.Language([]string{"ko", "en"})
 
@@ -174,7 +175,7 @@ func (s LanguageSuite) TestMatchAsterisk() {
 }
 
 func (s LanguageSuite) TestFirstMatchAllAsterisk() {
-	n := setUpNegotiator(HeaderAcceptLanguage, "*, ko;q=0.5")
+	n := setUpNegotiator(headers.AcceptLanguage, "*, ko;q=0.5")
 
 	bestOffer, matched := n.Language([]string{"en", "ko", "zh"})
 
@@ -192,7 +193,7 @@ type EncodingSuite struct {
 }
 
 func (s EncodingSuite) TestEmpty() {
-	n := setUpNegotiator(HeaderAcceptEncoding, "")
+	n := setUpNegotiator(headers.AcceptEncoding, "")
 
 	_, matched := n.Encoding([]string{})
 
@@ -200,7 +201,7 @@ func (s EncodingSuite) TestEmpty() {
 }
 
 func (s EncodingSuite) TestCaseInsensitive() {
-	n := setUpNegotiator(HeaderAcceptEncoding, "GZip")
+	n := setUpNegotiator(headers.AcceptEncoding, "GZip")
 
 	bestOffer, matched := n.Encoding([]string{"Gzip"})
 
@@ -209,7 +210,7 @@ func (s EncodingSuite) TestCaseInsensitive() {
 }
 
 func (s EncodingSuite) TestUnMatched() {
-	n := setUpNegotiator(HeaderAcceptEncoding, "gzip,default")
+	n := setUpNegotiator(headers.AcceptEncoding, "gzip,default")
 
 	_, matched := n.Encoding([]string{"zlib"})
 
@@ -217,7 +218,7 @@ func (s EncodingSuite) TestUnMatched() {
 }
 
 func (s EncodingSuite) TestEmptyLanguages() {
-	n := setUpNegotiator(HeaderAcceptEncoding, "gzip;q=0")
+	n := setUpNegotiator(headers.AcceptEncoding, "gzip;q=0")
 
 	_, matched := n.Encoding([]string{"gzip"})
 
@@ -225,7 +226,7 @@ func (s EncodingSuite) TestEmptyLanguages() {
 }
 
 func (s EncodingSuite) TestOneMatch() {
-	n := setUpNegotiator(HeaderAcceptEncoding, "gzip;q=0.2")
+	n := setUpNegotiator(headers.AcceptEncoding, "gzip;q=0.2")
 
 	bestOffer, matched := n.Encoding([]string{"gzip"})
 
@@ -234,7 +235,7 @@ func (s EncodingSuite) TestOneMatch() {
 }
 
 func (s EncodingSuite) TestMatchAsterisk() {
-	n := setUpNegotiator(HeaderAcceptEncoding, "*")
+	n := setUpNegotiator(headers.AcceptEncoding, "*")
 
 	bestOffer, matched := n.Encoding([]string{"gzip", "deflate"})
 
@@ -243,7 +244,7 @@ func (s EncodingSuite) TestMatchAsterisk() {
 }
 
 func (s EncodingSuite) TestFirstMatchAllAsterisk() {
-	n := setUpNegotiator(HeaderAcceptEncoding, "*, gzip;q=0.5")
+	n := setUpNegotiator(headers.AcceptEncoding, "*, gzip;q=0.5")
 
 	bestOffer, matched := n.Encoding([]string{"gzip", "deflate", "zlib"})
 
@@ -261,7 +262,7 @@ type CharsetSuite struct {
 }
 
 func (s CharsetSuite) TestEmpty() {
-	n := setUpNegotiator(HeaderAcceptCharset, "")
+	n := setUpNegotiator(headers.AcceptCharset, "")
 
 	_, matched := n.Charset([]string{})
 
@@ -269,7 +270,7 @@ func (s CharsetSuite) TestEmpty() {
 }
 
 func (s CharsetSuite) TestCaseInsensitive() {
-	n := setUpNegotiator(HeaderAcceptCharset, "ISO-8859-1")
+	n := setUpNegotiator(headers.AcceptCharset, "ISO-8859-1")
 
 	bestOffer, matched := n.Charset([]string{"ISO-8859-1"})
 
@@ -278,7 +279,7 @@ func (s CharsetSuite) TestCaseInsensitive() {
 }
 
 func (s CharsetSuite) TestUnMatched() {
-	n := setUpNegotiator(HeaderAcceptCharset, "ISO-8859-1,UTF-8")
+	n := setUpNegotiator(headers.AcceptCharset, "ISO-8859-1,UTF-8")
 
 	_, matched := n.Charset([]string{"ASCII"})
 
@@ -286,7 +287,7 @@ func (s CharsetSuite) TestUnMatched() {
 }
 
 func (s CharsetSuite) TestEmptyCharset() {
-	n := setUpNegotiator(HeaderAcceptCharset, "UTF-8;q=0")
+	n := setUpNegotiator(headers.AcceptCharset, "UTF-8;q=0")
 
 	_, matched := n.Charset([]string{"UTF-8"})
 
@@ -294,7 +295,7 @@ func (s CharsetSuite) TestEmptyCharset() {
 }
 
 func (s CharsetSuite) TestOneMatch() {
-	n := setUpNegotiator(HeaderAcceptCharset, "UTF-8;q=0.2")
+	n := setUpNegotiator(headers.AcceptCharset, "UTF-8;q=0.2")
 
 	bestOffer, matched := n.Charset([]string{"UTF-8"})
 
@@ -303,7 +304,7 @@ func (s CharsetSuite) TestOneMatch() {
 }
 
 func (s CharsetSuite) TestMatchAsterisk() {
-	n := setUpNegotiator(HeaderAcceptCharset, "*")
+	n := setUpNegotiator(headers.AcceptCharset, "*")
 
 	bestOffer, matched := n.Charset([]string{"UTF-8", "ISO-8859-1"})
 
@@ -312,7 +313,7 @@ func (s CharsetSuite) TestMatchAsterisk() {
 }
 
 func (s CharsetSuite) TestFirstMatchAllAsterisk() {
-	n := setUpNegotiator(HeaderAcceptCharset, "*, UTF-8;q=0.5")
+	n := setUpNegotiator(headers.AcceptCharset, "*, UTF-8;q=0.5")
 
 	bestOffer, matched := n.Charset([]string{"UTF-8", "ISO-8859-1", "ASCII"})
 
@@ -321,7 +322,7 @@ func (s CharsetSuite) TestFirstMatchAllAsterisk() {
 }
 
 func (s CharsetSuite) TestHighOrderPreferred() {
-	n := setUpNegotiator(HeaderAcceptCharset, "UTF-8;q=0.6, ISO-8859-1;q=0.8, UTF-8;q=0.9")
+	n := setUpNegotiator(headers.AcceptCharset, "UTF-8;q=0.6, ISO-8859-1;q=0.8, UTF-8;q=0.9")
 
 	bestOffer, matched := n.Charset([]string{"UTF-8", "ISO-8859-1", "ASCII"})
 

@@ -10,7 +10,7 @@ import (
 
 func ExampleNegotiator_Accept() {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	req.Header.Set(negotiator.HeaderAccept, "text/html, application/*;q=0.9, image/jpeg;q=0.8")
+	req.Header.Set("Accept", "text/html, application/*;q=0.9, image/jpeg;q=0.8")
 	negotiator := negotiator.New(req)
 
 	fmt.Println(negotiator.Accept([]string{"text/html", "application/json", "image/jpeg"}))
@@ -25,7 +25,7 @@ func ExampleNegotiator_Accept() {
 
 func ExampleNegotiator_Encoding() {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	req.Header.Set(negotiator.HeaderAcceptEncoding, "gzip, compress;q=0.2, identity;q=0.5")
+	req.Header.Set("Accept-Encoding", "gzip, compress;q=0.2, identity;q=0.5")
 	negotiator := negotiator.New(req)
 
 	fmt.Println(negotiator.Encoding([]string{"identity", "gzip"}))
@@ -37,7 +37,7 @@ func ExampleNegotiator_Encoding() {
 
 func ExampleNegotiator_Language() {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	req.Header.Set(negotiator.HeaderAcceptLanguage, "en;q=0.8, es, pt")
+	req.Header.Set("Accept-Language", "en;q=0.8, es, pt")
 	negotiator := negotiator.New(req)
 
 	fmt.Println(negotiator.Language([]string{"en", "es", "fr"}))
@@ -49,7 +49,7 @@ func ExampleNegotiator_Language() {
 
 func ExampleNegotiator_Charset() {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	req.Header.Set(negotiator.HeaderAcceptCharset, "utf-8, iso-8859-1;q=0.8, utf-7;q=0.2")
+	req.Header.Set("Accept-Language", "utf-8, iso-8859-1;q=0.8, utf-7;q=0.2")
 	negotiator := negotiator.New(req)
 
 	fmt.Println(negotiator.Charset([]string{"UTF-8", "ISO-8859-1", "ISO-8859-5"}))

@@ -5,6 +5,7 @@ import (
 
 	"net/http"
 
+	"github.com/go-http-utils/headers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -24,8 +25,8 @@ func (s *ParseCharsetTestSuite) SetupTest() {
 func (s *ParseCharsetTestSuite) TestEmpty() {
 	assert := assert.New(s.T())
 
-	s.header.Set(HeaderAcceptCharset, "")
-	specs := s.parser.parse(HeaderAcceptCharset)
+	s.header.Set(headers.AcceptCharset, "")
+	specs := s.parser.parse(headers.AcceptCharset)
 
 	assert.Equal(1, len(specs))
 
@@ -35,8 +36,8 @@ func (s *ParseCharsetTestSuite) TestEmpty() {
 func (s *ParseCharsetTestSuite) TestAsterisk() {
 	assert := assert.New(s.T())
 
-	s.header.Set(HeaderAcceptCharset, "*")
-	specs := s.parser.parse(HeaderAcceptCharset)
+	s.header.Set(headers.AcceptCharset, "*")
+	specs := s.parser.parse(headers.AcceptCharset)
 
 	assert.Equal(1, len(specs))
 
@@ -46,8 +47,8 @@ func (s *ParseCharsetTestSuite) TestAsterisk() {
 func (s *ParseCharsetTestSuite) TestOneLanguage() {
 	assert := assert.New(s.T())
 
-	s.header.Set(HeaderAcceptCharset, "UTF-8;level=1.0")
-	specs := s.parser.parse(HeaderAcceptCharset)
+	s.header.Set(headers.AcceptCharset, "UTF-8;level=1.0")
+	specs := s.parser.parse(headers.AcceptCharset)
 
 	assert.Equal(1, len(specs))
 
@@ -57,8 +58,8 @@ func (s *ParseCharsetTestSuite) TestOneLanguage() {
 func (s *ParseCharsetTestSuite) TestOneLanguageWithQZero() {
 	assert := assert.New(s.T())
 
-	s.header.Set(HeaderAcceptCharset, "*, ISO-8859-1;level=0")
-	specs := s.parser.parse(HeaderAcceptCharset)
+	s.header.Set(headers.AcceptCharset, "*, ISO-8859-1;level=0")
+	specs := s.parser.parse(headers.AcceptCharset)
 
 	assert.Equal(1, len(specs))
 
@@ -68,8 +69,8 @@ func (s *ParseCharsetTestSuite) TestOneLanguageWithQZero() {
 func (s *ParseCharsetTestSuite) TestSortByQ() {
 	assert := assert.New(s.T())
 
-	s.header.Set(HeaderAcceptCharset, "*;level=0.8, ISO-8859-1, UTF-8")
-	specs := s.parser.parse(HeaderAcceptCharset)
+	s.header.Set(headers.AcceptCharset, "*;level=0.8, ISO-8859-1, UTF-8")
+	specs := s.parser.parse(headers.AcceptCharset)
 
 	assert.Equal(3, len(specs))
 
