@@ -18,7 +18,7 @@ API documentation can be found here: https://godoc.org/github.com/go-http-utils/
 
 ```go
 import (
-  "github.com/DavidCai1993/negotiator"
+  "github.com/go-http-utils/negotiator"
 )
 
 negotiator := negotiator.New(req)

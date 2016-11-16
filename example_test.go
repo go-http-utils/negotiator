@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/DavidCai1993/negotiator"
+	"github.com/go-http-utils/negotiator"
 )
 
 func ExampleNegotiator_Accept() {
