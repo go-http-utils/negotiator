@@ -64,41 +64,38 @@ func formatHeaderVal(val string) string {
 
 // Negotiator repensents the HTTP negotiator.
 type Negotiator struct {
-	req *http.Request
+	header http.Header
 }
 
 // New creates an instance of Negotiator.
-func New(req *http.Request) Negotiator {
-	return Negotiator{req}
+func New(header http.Header) *Negotiator {
+	return &Negotiator{header}
 }
 
-// Accept returns the most preferred content types from the HTTP Accept header.
-func (n Negotiator) Accept(offers []string) (bestOffer string, matched bool) {
-	parser := newHeaderParser(n.req.Header, true)
-
+// Type returns the most preferred content type from the HTTP Accept header.
+// If nothing accepted, then empty string is returned.
+func (n *Negotiator) Type(offers ...string) (bestOffer string) {
+	parser := newHeaderParser(n.header, true)
 	return parser.selectOffer(offers, parser.parse(headers.Accept))
 }
 
 // Language returns the most preferred language from the HTTP Accept-Language
-// header.
-func (n Negotiator) Language(offers []string) (bestOffer string, matched bool) {
-	parser := newHeaderParser(n.req.Header, false)
-
+// header. If nothing accepted, then empty string is returned.
+func (n *Negotiator) Language(offers ...string) (bestOffer string) {
+	parser := newHeaderParser(n.header, false)
 	return parser.selectOffer(offers, parser.parse(headers.AcceptLanguage))
 }
 
 // Encoding returns the most preferred language from the HTTP Accept-Encoding
-// header.
-func (n Negotiator) Encoding(offers []string) (bestOffer string, matched bool) {
-	parser := newHeaderParser(n.req.Header, false)
-
+// header. If nothing accepted, then empty string is returned.
+func (n *Negotiator) Encoding(offers ...string) (bestOffer string) {
+	parser := newHeaderParser(n.header, false)
 	return parser.selectOffer(offers, parser.parse(headers.AcceptEncoding))
 }
 
 // Charset returns the most preferred language from the HTTP Accept-Charset
-// header.
-func (n Negotiator) Charset(offers []string) (bestOffer string, matched bool) {
-	parser := newHeaderParser(n.req.Header, false)
-
+// header. If nothing accepted, then empty string is returned.
+func (n *Negotiator) Charset(offers ...string) (bestOffer string) {
+	parser := newHeaderParser(n.header, false)
 	return parser.selectOffer(offers, parser.parse(headers.AcceptCharset))
 }
