@@ -130,3 +130,7 @@ func (p headerParser) selectOffer(offers []string, specs specs) (bestOffer strin
 
 	return
 }
+
+func formatHeaderVal(val string) string {
+	return strings.ToLower(strings.Replace(val, " ", "", -1))
+}

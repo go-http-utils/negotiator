@@ -5,7 +5,6 @@ import (
 
 	"net/http"
 
-	"github.com/go-http-utils/headers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -25,8 +24,8 @@ func (s *ParseEncodingTestSuite) SetupTest() {
 func (s *ParseEncodingTestSuite) TestEmpty() {
 	assert := assert.New(s.T())
 
-	s.header.Set(headers.AcceptEncoding, "")
-	specs := s.parser.parse(headers.AcceptEncoding)
+	s.header.Set(headerAcceptEncoding, "")
+	specs := s.parser.parse(headerAcceptEncoding)
 
 	assert.Equal(1, len(specs))
 
@@ -36,8 +35,8 @@ func (s *ParseEncodingTestSuite) TestEmpty() {
 func (s *ParseEncodingTestSuite) TestAsterisk() {
 	assert := assert.New(s.T())
 
-	s.header.Set(headers.AcceptEncoding, "*")
-	specs := s.parser.parse(headers.AcceptEncoding)
+	s.header.Set(headerAcceptEncoding, "*")
+	specs := s.parser.parse(headerAcceptEncoding)
 
 	assert.Equal(1, len(specs))
 
@@ -47,8 +46,8 @@ func (s *ParseEncodingTestSuite) TestAsterisk() {
 func (s *ParseEncodingTestSuite) TestOneEncoing() {
 	assert := assert.New(s.T())
 
-	s.header.Set(headers.AcceptEncoding, "gzip")
-	specs := s.parser.parse(headers.AcceptEncoding)
+	s.header.Set(headerAcceptEncoding, "gzip")
+	specs := s.parser.parse(headerAcceptEncoding)
 
 	assert.Equal(1, len(specs))
 
@@ -58,8 +57,8 @@ func (s *ParseEncodingTestSuite) TestOneEncoing() {
 func (s *ParseEncodingTestSuite) TestOneEncodingWithQZero() {
 	assert := assert.New(s.T())
 
-	s.header.Set(headers.AcceptEncoding, "*, gzip;q=0")
-	specs := s.parser.parse(headers.AcceptEncoding)
+	s.header.Set(headerAcceptEncoding, "*, gzip;q=0")
+	specs := s.parser.parse(headerAcceptEncoding)
 
 	assert.Equal(1, len(specs))
 
@@ -69,8 +68,8 @@ func (s *ParseEncodingTestSuite) TestOneEncodingWithQZero() {
 func (s *ParseEncodingTestSuite) TestSortByQ() {
 	assert := assert.New(s.T())
 
-	s.header.Set(headers.AcceptEncoding, "*;q=0.8, defalte, gzip")
-	specs := s.parser.parse(headers.AcceptEncoding)
+	s.header.Set(headerAcceptEncoding, "*;q=0.8, defalte, gzip")
+	specs := s.parser.parse(headerAcceptEncoding)
 
 	assert.Equal(3, len(specs))
 
