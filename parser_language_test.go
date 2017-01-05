@@ -5,7 +5,6 @@ import (
 
 	"net/http"
 
-	"github.com/go-http-utils/headers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -25,8 +24,8 @@ func (s *ParseLanguageTestSuite) SetupTest() {
 func (s *ParseLanguageTestSuite) TestEmpty() {
 	assert := assert.New(s.T())
 
-	s.header.Set(headers.AcceptLanguage, "")
-	specs := s.parser.parse(headers.AcceptLanguage)
+	s.header.Set(headerAcceptLanguage, "")
+	specs := s.parser.parse(headerAcceptLanguage)
 
 	assert.Equal(1, len(specs))
 
@@ -36,8 +35,8 @@ func (s *ParseLanguageTestSuite) TestEmpty() {
 func (s *ParseLanguageTestSuite) TestAsterisk() {
 	assert := assert.New(s.T())
 
-	s.header.Set(headers.AcceptLanguage, "*")
-	specs := s.parser.parse(headers.AcceptLanguage)
+	s.header.Set(headerAcceptLanguage, "*")
+	specs := s.parser.parse(headerAcceptLanguage)
 
 	assert.Equal(1, len(specs))
 
@@ -47,8 +46,8 @@ func (s *ParseLanguageTestSuite) TestAsterisk() {
 func (s *ParseLanguageTestSuite) TestOneLanguage() {
 	assert := assert.New(s.T())
 
-	s.header.Set(headers.AcceptLanguage, "en")
-	specs := s.parser.parse(headers.AcceptLanguage)
+	s.header.Set(headerAcceptLanguage, "en")
+	specs := s.parser.parse(headerAcceptLanguage)
 
 	assert.Equal(1, len(specs))
 
@@ -58,8 +57,8 @@ func (s *ParseLanguageTestSuite) TestOneLanguage() {
 func (s *ParseLanguageTestSuite) TestOneLanguageWithQZero() {
 	assert := assert.New(s.T())
 
-	s.header.Set(headers.AcceptLanguage, "*, en;q=0")
-	specs := s.parser.parse(headers.AcceptLanguage)
+	s.header.Set(headerAcceptLanguage, "*, en;q=0")
+	specs := s.parser.parse(headerAcceptLanguage)
 
 	assert.Equal(1, len(specs))
 
@@ -69,8 +68,8 @@ func (s *ParseLanguageTestSuite) TestOneLanguageWithQZero() {
 func (s *ParseLanguageTestSuite) TestSortByQ() {
 	assert := assert.New(s.T())
 
-	s.header.Set(headers.AcceptLanguage, "*;q=0.8, en, es")
-	specs := s.parser.parse(headers.AcceptLanguage)
+	s.header.Set(headerAcceptLanguage, "*;q=0.8, en, es")
+	specs := s.parser.parse(headerAcceptLanguage)
 
 	assert.Equal(3, len(specs))
 

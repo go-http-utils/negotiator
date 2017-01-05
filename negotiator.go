@@ -3,32 +3,37 @@ package negotiator
 import (
 	"net/http"
 	"strings"
-
-	"github.com/go-http-utils/headers"
 )
 
 // Version is this package's version
-const Version = "0.1.0"
+const Version = "0.2.0"
+
+const (
+	headerAccept         = "Accept"
+	headerAcceptLanguage = "Accept-Language"
+	headerAcceptEncoding = "Accept-Encoding"
+	headerAcceptCharset  = "Accept-Charset"
+)
 
 type spec struct {
 	val string
 	q   float64
 }
 
-// Specs it the shorthand for []Spec.
+// Specs represents []Spec.
 type specs []spec
 
-// Len is used to impelement sort.Interface for Specs.
+// Len is to impelement sort.Interface for Specs.
 func (ss specs) Len() int {
 	return len(ss)
 }
 
-// Swap is used to impelement sort.Interface for Specs.
+// Swap is to impelement sort.Interface for Specs.
 func (ss specs) Swap(i, j int) {
 	ss[i], ss[j] = ss[j], ss[i]
 }
 
-// Less is used to impelement sort.Interface for Specs.
+// Less is to impelement sort.Interface for Specs.
 func (ss specs) Less(i, j int) bool {
 	if ss[i].q > ss[j].q {
 		return true
@@ -58,10 +63,6 @@ func (ss specs) hasVal(val string) bool {
 	return false
 }
 
-func formatHeaderVal(val string) string {
-	return strings.ToLower(strings.Replace(val, " ", "", -1))
-}
-
 // Negotiator repensents the HTTP negotiator.
 type Negotiator struct {
 	header http.Header
@@ -76,26 +77,26 @@ func New(header http.Header) *Negotiator {
 // If nothing accepted, then empty string is returned.
 func (n *Negotiator) Type(offers ...string) (bestOffer string) {
 	parser := newHeaderParser(n.header, true)
-	return parser.selectOffer(offers, parser.parse(headers.Accept))
+	return parser.selectOffer(offers, parser.parse(headerAccept))
 }
 
 // Language returns the most preferred language from the HTTP Accept-Language
 // header. If nothing accepted, then empty string is returned.
 func (n *Negotiator) Language(offers ...string) (bestOffer string) {
 	parser := newHeaderParser(n.header, false)
-	return parser.selectOffer(offers, parser.parse(headers.AcceptLanguage))
+	return parser.selectOffer(offers, parser.parse(headerAcceptLanguage))
 }
 
-// Encoding returns the most preferred language from the HTTP Accept-Encoding
+// Encoding returns the most preferred encoding from the HTTP Accept-Encoding
 // header. If nothing accepted, then empty string is returned.
 func (n *Negotiator) Encoding(offers ...string) (bestOffer string) {
 	parser := newHeaderParser(n.header, false)
-	return parser.selectOffer(offers, parser.parse(headers.AcceptEncoding))
+	return parser.selectOffer(offers, parser.parse(headerAcceptEncoding))
 }
 
-// Charset returns the most preferred language from the HTTP Accept-Charset
+// Charset returns the most preferred charset from the HTTP Accept-Charset
 // header. If nothing accepted, then empty string is returned.
 func (n *Negotiator) Charset(offers ...string) (bestOffer string) {
 	parser := newHeaderParser(n.header, false)
-	return parser.selectOffer(offers, parser.parse(headers.AcceptCharset))
+	return parser.selectOffer(offers, parser.parse(headerAcceptCharset))
 }
