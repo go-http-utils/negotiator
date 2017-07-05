@@ -5,9 +5,6 @@ import (
 	"strings"
 )
 
-// Version is this package's version
-const Version = "0.2.0"
-
 const (
 	headerAccept         = "Accept"
 	headerAcceptLanguage = "Accept-Language"

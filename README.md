@@ -1,4 +1,5 @@
 # negotiator
+
 [![Build Status](https://travis-ci.org/go-http-utils/negotiator.svg?branch=master)](https://travis-ci.org/go-http-utils/negotiator)
 [![Coverage Status](https://coveralls.io/repos/github/go-http-utils/negotiator/badge.svg?branch=master)](https://coveralls.io/github/go-http-utils/negotiator?branch=master)
 
